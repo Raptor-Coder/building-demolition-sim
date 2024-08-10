@@ -146,3 +146,55 @@
         // Simulate explosion sounds
         const explosion = new Audio('https://websim.ai/demolition-simulator/explosion.mp3');
         explosion.play();
+
+        // Collapse nearest floor
+        const floors = Array.from(currentBuilding.querySelectorAll('.floor'));
+        const nearestFloor = floors.reduce((nearest, floor) => {
+          const floorRect = floor.getBoundingClientRect();
+          const floorY = floorRect.top + floorRect.height / 2;
+          const distance = Math.abs(charge.y - floorY);
+          return distance < Math.abs(charge.y - nearest.center) ? {element: floor, center: floorY} : nearest;
+        }, {element: null, center: Infinity});
+
+        if (nearestFloor.element) {
+          collapseFloor(nearestFloor.element);
+        }
+
+        // Simulate rumbling effect
+        const rumbleDuration = 500; // 0.5 seconds
+        const startTime = Date.now();
+        
+        function rumble() {
+          const elapsedTime = Date.now() - startTime;
+          if (elapsedTime < rumbleDuration) {
+            document.body.style.transform = `translate(${Math.random() * 5 - 2.5}px, ${Math.random() * 5 - 2.5}px)`;
+            requestAnimationFrame(rumble);
+          } else {
+            document.body.style.transform = 'none';
+          }
+        }
+        
+        rumble();
+
+        // Wait before next explosion
+        await new Promise(resolve => setTimeout(resolve, 1000));
+      }
+
+      charges = [];
+
+      // Show dust cloud
+      dust.classList.add('active');
+    }
+
+    detonateBtn.addEventListener('click', detonateCharges);
+
+    function resetSimulation() {
+      // Remove charges
+      charges.forEach(charge => charge.element.remove());
+      charges = [];
+
+      // Reset building
+      currentBuilding.querySelectorAll('.floor').forEach(floor => {
+        floor.style.transform = 'none';
+        floor.style.opacity = '1';
+      });
