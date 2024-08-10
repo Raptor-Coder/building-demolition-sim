@@ -100,3 +100,49 @@
       currentBuilding.classList.add('active');
       resetSimulation();
     });
+
+    buildingContainer.addEventListener('click', (e) => {
+      if (e.target === buildingContainer || e.target.classList.contains('floor') || e.target.classList.contains('window')) {
+        const charge = document.createElement('div');
+        charge.classList.add('charge');
+        const rect = buildingContainer.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        charge.style.left = `${x}px`;
+        charge.style.top = `${y}px`;
+        charge.textContent = charges.length + 1;
+        currentBuilding.appendChild(charge);
+        charges.push({element: charge, x, y});
+      }
+    });
+
+    function createExplosion(x, y) {
+      const explosion = document.createElement('div');
+      explosion.classList.add('explosion');
+      explosion.style.left = x + 'px';
+      explosion.style.top = y + 'px';
+      currentBuilding.appendChild(explosion);
+      setTimeout(() => explosion.remove(), 500);
+    }
+
+    function collapseFloor(floor) {
+      floor.style.transform = 'translateY(20px) skew(5deg, 5deg)';
+      floor.style.opacity = '0.7';
+    }
+
+    async function detonateCharges() {
+      if (charges.length === 0) {
+        alert('Please place at least one charge before detonating.');
+        return;
+      }
+
+      detonateBtn.disabled = true;
+
+      for (let i = 0; i < charges.length; i++) {
+        const charge = charges[i];
+        createExplosion(charge.x, charge.y);
+        charge.element.remove();
+
+        // Simulate explosion sounds
+        const explosion = new Audio('https://websim.ai/demolition-simulator/explosion.mp3');
+        explosion.play();
