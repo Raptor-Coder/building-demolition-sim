@@ -55,3 +55,48 @@
           <div class="window" style="left: 120px;"></div>
           <div class="window" style="left: 210px;"></div>
         </div>
+        <div class="floor" style="background-color: #CD853F; height: 25%; bottom: 50%;">
+          <div class="window" style="left: 30px;"></div>
+          <div class="window" style="left: 120px;"></div>
+          <div class="window" style="left: 210px;"></div>
+        </div>
+        <div class="floor" style="background-color: #DEB887; height: 25%; bottom: 75%;">
+          <div class="window" style="left: 30px;"></div>
+          <div class="window" style="left: 120px;"></div>
+          <div class="window" style="left: 210px;"></div>
+        </div>
+      </div>
+      <div id="factory" class="building">
+        <div class="floor" style="background-color: #696969; height: 60%; bottom: 0%;">
+          <div class="window" style="height: 80px; left: 60px;"></div>
+          <div class="window" style="height: 80px; left: 180px;"></div>
+        </div>
+        <div class="floor" style="background-color: #A9A9A9; height: 40%; bottom: 60%;">
+          <div class="window" style="height: 60px; left: 30px;"></div>
+          <div class="window" style="height: 60px; left: 120px;"></div>
+          <div class="window" style="height: 60px; left: 210px;"></div>
+        </div>
+      </div>
+      <div id="dust"></div>
+    </div>
+    <button id="detonate">Detonate</button>
+    <button id="reset">Reset</button>
+  </div>
+
+  <script>
+    const buildingContainer = document.getElementById('building-container');
+    const dust = document.getElementById('dust');
+    const detonateBtn = document.getElementById('detonate');
+    const resetBtn = document.getElementById('reset');
+    const buildingSelect = document.getElementById('building-select');
+    let charges = [];
+    let currentBuilding = document.querySelector('.building.active');
+
+    buildingSelect.addEventListener('change', (e) => {
+      document.querySelectorAll('.building').forEach(building => {
+        building.classList.remove('active');
+      });
+      currentBuilding = document.getElementById(e.target.value);
+      currentBuilding.classList.add('active');
+      resetSimulation();
+    });
